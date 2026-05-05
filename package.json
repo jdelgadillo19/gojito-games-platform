@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "build": "echo \"Static platform build: no-op\"",
     "build:combined": "bash scripts/build-for-path-hosting.sh"
   }
 }
