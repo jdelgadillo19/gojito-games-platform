@@ -1,0 +1,6 @@
+/calculation-cove /calculatorcove/ 301
+/calculation-cove/* /calculatorcove/:splat 301
+/calculator-cove /calculatorcove/ 301
+/calculator-cove/* /calculatorcove/:splat 301
+/cakerybakery/* /cakerybakery/index.html 200
+/calculatorcove/* /calculatorcove/index.html 200

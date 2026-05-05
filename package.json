@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "build:combined": "bash scripts/build-for-path-hosting.sh"
+  }
+}
