@@ -1,2 +1,3 @@
-cakerybakery/
-calculatorcove/
+# Vendored game builds under cakerybakery/ and calculatorcove/ are tracked for Cloudflare Pages parity with gojitogames.com.
+
+.DS_Store

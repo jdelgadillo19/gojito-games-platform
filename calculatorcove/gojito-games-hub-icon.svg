@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gojito Games — play Cakery Bakery and Calculator Cove."
+    />
+    <title>Gojito Games</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/games-config.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#games">Skip to games</a>
+    <div class="wrap">
+      <header>
+        <div class="logo-mark" aria-hidden="true">G</div>
+        <h1>Gojito Games</h1>
+        <p class="tagline">Pick a game — learn, bake, and play.</p>
+      </header>
+
+      <section id="games" class="game-grid" aria-label="Games">
+        <a class="game-card cakery" id="link-cakery" href="#" data-game="cakeryBakery">
+          <span class="pill">Adventure</span>
+          <h2>Cakery Bakery</h2>
+          <p>Sticker puzzles, upgrades, and sweet progression — offline-first on your device.</p>
+          <span class="cta">
+            Play
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        </a>
+
+        <a class="game-card cove" id="link-cove" href="#" data-game="calculatorCove">
+          <span class="pill">Strategy</span>
+          <h2>Calculator Cove</h2>
+          <p>Factor-driven board play — sharpen math instincts against the computer.</p>
+          <span class="cta">
+            Play
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        </a>
+      </section>
+
+      <footer>
+        <p>© Gojito Games</p>
+      </footer>
+    </div>
+
+    <script>
+      document.querySelectorAll(".game-card[data-game]").forEach((el) => {
+        const key = el.dataset.game;
+        const url = window.GOJITO_GAMES && window.GOJITO_GAMES[key];
+        if (url) el.href = url;
+      });
+    </script>
+  </body>
+</html>
