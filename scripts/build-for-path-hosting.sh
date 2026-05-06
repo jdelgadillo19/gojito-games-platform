@@ -4,8 +4,8 @@ set -euo pipefail
 PORTAL="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECTS="$(cd "$PORTAL/.." && pwd)"
 
-CAKERY="$PROJECTS/cakery-bakery-copy-acaa7856"
-COVE="$PROJECTS/multiplication_game"
+CAKERY="$PROJECTS/cakery-bakery"
+COVE="$PROJECTS/calculator-cove"
 
 echo "Building Cakery (base /cakerybakery/)..."
 (cd "$CAKERY" && GOJITO_ASSET_BASE=/cakerybakery/ npm run build)
