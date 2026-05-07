@@ -1,0 +1,39 @@
+/**
+ * Fixed hub chip — loaded on every portal HTML shell (hub + game indexes).
+ * SPAs render their own toolbar above this layer (z-50+); z-index here avoids doubling visually.
+ */
+.portal-brand {
+  position: fixed;
+  top: clamp(0.75rem, 3vw, 1rem);
+  left: clamp(0.75rem, 3vw, 1rem);
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.625rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.portal-brand:hover,
+.portal-brand:focus-visible {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: rgba(255, 255, 255, 0.3);
+  outline: none;
+}
+
+.portal-brand img {
+  width: 26px;
+  height: 26px;
+  display: block;
+  pointer-events: none;
+  border-radius: 8px;
+}
