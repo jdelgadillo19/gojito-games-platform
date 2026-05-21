@@ -102,7 +102,7 @@ export function AuthTest() {
         {pendingAction ? ` (${pendingAction}…)` : ""}
       </p>
       <p>
-        <strong>Signed in:</strong> {isAuthenticated ? "yes" : "no"}
+        <strong>Signed in:</strong> {user ? "yes" : "no"}
       </p>
       <p>
         <strong>Email:</strong>{" "}
