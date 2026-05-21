@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
-import { isSupabaseConfigured, supabase } from "../supabase/client";
+import { supabase } from "../supabase/client";
 import { getCurrentUser, login as loginWithPassword, logout as signOut, signup as signUpWithPassword } from "./auth";
 import type { AuthCredentials, AuthError, AuthResult } from "./types";
 
@@ -17,7 +17,6 @@ export type AuthContextValue = {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: AuthError | null;
-  isSupabaseConfigured: boolean;
   login: (credentials: AuthCredentials) => Promise<AuthResult<User>>;
   signup: (credentials: AuthCredentials) => Promise<AuthResult<User>>;
   logout: () => Promise<AuthResult<void>>;
@@ -34,7 +33,7 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(isSupabaseConfigured);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
 
   const applySession = useCallback((nextSession: Session | null) => {
@@ -43,7 +42,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!supabase) {
       setIsLoading(false);
       applySession(null);
       return;
@@ -150,7 +149,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isAuthenticated: Boolean(user),
       isLoading,
       error,
-      isSupabaseConfigured,
       login,
       signup,
       logout,

@@ -55,7 +55,6 @@ export function AuthTest() {
     login,
     signup,
     logout,
-    isSupabaseConfigured,
   } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -98,13 +97,6 @@ export function AuthTest() {
         Auth test (temporary)
       </h2>
 
-      {!isSupabaseConfigured && (
-        <p role="alert" style={{ color: "#8b2500" }}>
-          Supabase is not configured. Add VITE_SUPABASE_URL and
-          VITE_SUPABASE_ANON_KEY to .env.
-        </p>
-      )}
-
       <p>
         <strong>Loading:</strong> {busy ? "yes" : "no"}
         {pendingAction ? ` (${pendingAction}…)` : ""}
@@ -134,7 +126,7 @@ export function AuthTest() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={inputStyle}
-          disabled={busy || !isSupabaseConfigured}
+          disabled={busy}
         />
         <label style={labelStyle} htmlFor="auth-test-password">
           Password
@@ -146,20 +138,20 @@ export function AuthTest() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={inputStyle}
-          disabled={busy || !isSupabaseConfigured}
+          disabled={busy}
         />
         <div style={buttonRowStyle}>
           <button
             type="submit"
             style={buttonStyle}
-            disabled={busy || !isSupabaseConfigured}
+            disabled={busy}
           >
             Log in
           </button>
           <button
             type="button"
             style={buttonStyle}
-            disabled={busy || !isSupabaseConfigured}
+            disabled={busy}
             onClick={handleSignup}
           >
             Sign up

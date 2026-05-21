@@ -1,5 +1,5 @@
 import type { User } from "@supabase/supabase-js";
-import { isSupabaseConfigured, supabase } from "../supabase/client";
+import { supabase } from "../supabase/client";
 import {
   fromSupabaseError,
   notConfiguredError,
@@ -8,7 +8,7 @@ import {
 import type { AuthCredentials, AuthError, AuthResult, AuthUser } from "./types";
 
 function assertConfigured(): AuthError | null {
-  if (!isSupabaseConfigured || !supabase) {
+  if (!supabase) {
     return notConfiguredError();
   }
   return null;
