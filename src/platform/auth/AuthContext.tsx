@@ -146,7 +146,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     () => ({
       user,
       session,
-      isAuthenticated: Boolean(user),
+      isAuthenticated: Boolean(session),
       isLoading,
       error,
       login,
