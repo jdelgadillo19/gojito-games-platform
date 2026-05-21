@@ -6,72 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/cakerybakery/manifest.json" />
     <title>Cakery Bakery</title>
-    <link rel="stylesheet" href="/portal-chrome.css" />
-    <script type="module" crossorigin src="/cakerybakery/assets/index-BJyii8k5.js"></script>
+    <script type="module" crossorigin src="/cakerybakery/assets/index-pdbDV8S8.js"></script>
     <link rel="stylesheet" crossorigin href="/cakerybakery/assets/index-C1Z1tkD5.css">
   </head>
   <body>
-    <a class="portal-brand" href="/" aria-label="Gojito Games — home">
-      <img src="/gojito-games-hub-icon.svg" width="26" height="26" alt="" decoding="async" />
-    </a>
     <div id="root"></div>
-    <script>
-      (function () {
-        var CUPCAKE_SRC = "/cakerybakery/cupcake-update.png";
-        var INJECTED_CLASS = "gojito-floating-cupcake-icon";
-
-        function wireFloatingCupcake() {
-          var didApply = false;
-
-          Array.prototype.slice.call(document.querySelectorAll("img")).forEach(function (img) {
-            var alt = (img.alt || "").toLowerCase();
-            var aria = (img.getAttribute("aria-label") || "").toLowerCase();
-            if (alt.indexOf("floating cupcake") !== -1 || aria.indexOf("floating cupcake") !== -1) {
-              if (img.src !== CUPCAKE_SRC) img.src = CUPCAKE_SRC;
-              didApply = true;
-            }
-          });
-
-          var labels = Array.prototype.slice
-            .call(document.querySelectorAll("body *"))
-            .filter(function (node) {
-              var text = (node.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-              return text === "floating cupcake";
-            });
-
-          labels.forEach(function (label) {
-            var container =
-              label.closest("button, [role='button'], [class*='floating'], [class*='cupcake']") ||
-              label.parentElement ||
-              label;
-
-            var icon = container.querySelector("img");
-            if (icon) {
-              icon.src = CUPCAKE_SRC;
-              didApply = true;
-              return;
-            }
-
-            var injected = document.createElement("img");
-            injected.className = INJECTED_CLASS;
-            injected.src = CUPCAKE_SRC;
-            injected.alt = "Floating cupcake";
-            injected.width = 22;
-            injected.height = 22;
-            injected.style.marginRight = "0.35rem";
-            container.insertBefore(injected, container.firstChild);
-            didApply = true;
-          });
-
-          return didApply;
-        }
-
-        var observer = new MutationObserver(wireFloatingCupcake);
-
-        observer.observe(document.body, { childList: true, subtree: true });
-        window.setInterval(wireFloatingCupcake, 800);
-        wireFloatingCupcake();
-      })();
-    </script>
   </body>
 </html>

@@ -11,7 +11,7 @@ This document **does not replace** [`BACKEND_BEHAVIOR.md`](./BACKEND_BEHAVIOR.md
 
 Aligned with (and expanding slightly on) `BACKEND_BEHAVIOR.md`:
 
-- **Tier source of truth:** Backend profile tier (e.g. Stripe → Workers → persisted profile). Games may mirror tier into Firebase `users/{uid}.tier` via **`GET /api/entitlements/me`** (Bearer Firebase ID token). Canonical short tiers: **bean** (no account), **beef**, **guac**; normalize legacy `mvp` / `gold` / `paid` on read.
+- **Tier source of truth:** Backend profile tier (e.g. Stripe → Workers → persisted profile). Games may mirror tier into Supabase `profiles.tier` via **`GET /api/entitlements/me`** (Bearer Supabase access token). Canonical short tiers: **bean** (no account), **beef**, **guac**; normalize legacy `mvp` / `gold` / `paid` on read.
 - **Guac is global** across `gojitogames.com` for paywalled *product* gates; **gameplay skill thresholds** remain separate (AND gate where required).
 - **Refresh UX:** After login and periodically while authenticated, re-sync entitlements; surface clear copy when stale (“refresh access”, re-login).
 - **Admin sandbox:** Portal hub admin tools use browser **dummy profiles** and **`gojito.admin.v1.*`** namespaced `localStorage` keys shared with games for view-as-user testing.

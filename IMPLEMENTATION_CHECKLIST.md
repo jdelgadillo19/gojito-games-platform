@@ -18,7 +18,7 @@ This checklist operationalizes the confirmed backend behavior decisions for Bean
 ### Platform auth
 
 - [ ] Implement platform-level auth entry points in `gojito-platform`.
-- [ ] Enable Firebase auth providers:
+- [ ] Enable Supabase auth providers:
   - [ ] email/password
   - [ ] Google
 - [ ] Add account modal contract usable from embedded game top bars.
@@ -130,7 +130,7 @@ This checklist operationalizes the confirmed backend behavior decisions for Bean
 - [ ] Configure dev environment.
 - [ ] Configure staging environment.
 - [ ] Configure production environment.
-- [ ] Separate Firebase/Stripe/Cloudflare config and secrets per environment.
+- [ ] Separate Supabase/Stripe/Cloudflare config and secrets per environment.
 
 ### Schema migration policy
 

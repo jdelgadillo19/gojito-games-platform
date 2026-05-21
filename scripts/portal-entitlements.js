@@ -19,10 +19,9 @@
 
   function getTokenFromStorageFallback() {
     var keys = [
-      "gojito.firebase.idToken",
+      "gojito.supabase.accessToken",
       "gojito.auth.idToken",
       "gojito.idToken",
-      "firebase.idToken",
     ];
     for (var i = 0; i < keys.length; i++) {
       var token = localStorage.getItem(keys[i]);
@@ -31,7 +30,7 @@
     return null;
   }
 
-  async function getFirebaseToken() {
+  async function getSupabaseToken() {
     try {
       var provided = await getTokenFromWindowProvider();
       if (provided) return String(provided);
@@ -82,7 +81,7 @@
   }
 
   async function fetchProfileFromBackend() {
-    var token = await getFirebaseToken();
+    var token = await getSupabaseToken();
     if (!token) {
       return {
         profileTier: DEFAULT_TIER,
