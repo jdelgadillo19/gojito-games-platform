@@ -20,8 +20,6 @@
     <script src="/games-config.js"></script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
     <a class="skip-link" href="#games">Skip to games</a>
     <a class="portal-brand" href="/" aria-label="Gojito Games — home">
       <img src="/gojito-games-hub-icon.svg" width="26" height="26" alt="" decoding="async" />
@@ -32,7 +30,10 @@
         <p class="tagline">Pick a game — learn, bake, and play.</p>
         <div class="entitlement-status" id="entitlementStatus" aria-live="polite">
           <p class="entitlement-status__text" id="entitlementStatusText">Checking access tier...</p>
-          <button type="button" id="entitlementRefreshButton">Refresh access</button>
+          <div class="entitlement-status__actions">
+            <div id="gojito-account-root"></div>
+            <button type="button" id="entitlementRefreshButton">Refresh access</button>
+          </div>
         </div>
       </header>
 
@@ -74,6 +75,8 @@
         if (url) el.href = url;
       });
     </script>
+    <script src="/scripts/gojitoEntitlementsCore.js"></script>
     <script src="/scripts/portal-entitlements.js"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -109,6 +109,40 @@ export async function logout(): Promise<AuthResult<void>> {
   return { data: undefined, error: null };
 }
 
+export async function signInWithGoogle(): Promise<AuthResult<void>> {
+  const configError = assertConfigured();
+  if (configError) {
+    return { data: null, error: configError };
+  }
+
+  const { error } = await supabase!.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.href },
+  });
+
+  if (error) {
+    return { data: null, error: fromSupabaseError(error) };
+  }
+
+  return { data: undefined, error: null };
+}
+
+export async function getAccessToken(
+  session: { access_token?: string } | null | undefined,
+  forceRefresh = false,
+): Promise<string | null> {
+  const configError = assertConfigured();
+  if (configError) return null;
+
+  if (forceRefresh) {
+    const { data, error } = await supabase!.auth.refreshSession();
+    if (error) return null;
+    return data.session?.access_token ?? null;
+  }
+
+  return session?.access_token ?? null;
+}
+
 export async function getCurrentUser(): Promise<AuthResult<User | null>> {
   const configError = assertConfigured();
   if (configError) {

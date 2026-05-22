@@ -1,4 +1,11 @@
-export { login, signup, logout, getCurrentUser } from "./auth";
+export {
+  login,
+  signup,
+  logout,
+  getCurrentUser,
+  signInWithGoogle,
+  getAccessToken,
+} from "./auth";
 export { AuthProvider, AuthContext, type AuthContextValue } from "./AuthContext";
 export { useAuth } from "./useAuth";
 export type {

@@ -7,6 +7,8 @@
     "build:combined": "bash scripts/build-for-path-hosting.sh"
   },
   "dependencies": {
+    "@gojito/entitlements": "file:../packages/entitlements",
+    "@gojito/shared": "file:../packages/gojito-shared",
     "@supabase/supabase-js": "^2.106.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"

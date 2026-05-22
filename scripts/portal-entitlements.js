@@ -1,6 +1,7 @@
 (function () {
   var STORAGE_KEY = "gojito.profile.v1";
   var DEFAULT_TIER = "bean";
+  var Core = window.GojitoEntitlementsCore;
 
   var statusText = document.getElementById("entitlementStatusText");
   var refreshButton = document.getElementById("entitlementRefreshButton");
@@ -12,12 +13,19 @@
     return "bean";
   }
 
-  function getTokenFromWindowProvider() {
-    if (typeof window.GOJITO_GET_ID_TOKEN !== "function") return null;
-    return window.GOJITO_GET_ID_TOKEN();
-  }
-
-  function getTokenFromStorageFallback() {
+  async function getSupabaseToken() {
+    if (typeof window.GOJITO_GET_ACCESS_TOKEN === "function") {
+      try {
+        var provided = await window.GOJITO_GET_ACCESS_TOKEN();
+        if (provided) return String(provided);
+      } catch (_) {}
+    }
+    if (typeof window.GOJITO_GET_ID_TOKEN === "function") {
+      try {
+        var legacy = await window.GOJITO_GET_ID_TOKEN();
+        if (legacy) return String(legacy);
+      } catch (_) {}
+    }
     var keys = [
       "gojito.supabase.accessToken",
       "gojito.auth.idToken",
@@ -30,19 +38,17 @@
     return null;
   }
 
-  async function getSupabaseToken() {
-    try {
-      var provided = await getTokenFromWindowProvider();
-      if (provided) return String(provided);
-    } catch (_) {}
-    return getTokenFromStorageFallback();
-  }
-
   function parseEntitlementPayload(payload) {
-    var profileTier = normalizeTier(payload && payload.profileTier);
+    if (Core && Core.parseEntitlementApiResponse) {
+      var snap = Core.parseEntitlementApiResponse(payload);
+      if (snap) return Core.profileFromSnapshot(snap, "backend");
+    }
+    var accessTier = normalizeTier(payload && (payload.accessTier || payload.profileTier));
     var guacActive = !!(payload && payload.guacActive);
+    if (guacActive) accessTier = "guac";
     return {
-      profileTier: profileTier,
+      accessTier: accessTier,
+      profileTier: accessTier,
       guacActive: guacActive,
       updatedAt: new Date().toISOString(),
       source: "backend",
@@ -53,7 +59,9 @@
     try {
       var parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (!parsed || typeof parsed !== "object") return null;
-      parsed.profileTier = normalizeTier(parsed.profileTier);
+      var tier = normalizeTier(parsed.accessTier || parsed.profileTier);
+      parsed.accessTier = tier;
+      parsed.profileTier = tier;
       return parsed;
     } catch (_) {
       return null;
@@ -66,7 +74,7 @@
   }
 
   function applyProfileToUi(profile) {
-    var tier = normalizeTier(profile && profile.profileTier);
+    var tier = normalizeTier(profile && (profile.accessTier || profile.profileTier));
     document.documentElement.setAttribute("data-profile-tier", tier);
     if (!statusText) return;
     if (tier === "guac") {
@@ -74,16 +82,19 @@
       return;
     }
     if (tier === "beef") {
-      statusText.textContent = "Access tier: Beef.";
+      statusText.textContent = "Access tier: Beef (signed in).";
       return;
     }
     statusText.textContent = "Access tier: Bean (guest).";
   }
 
+  var refreshInFlight = false;
+
   async function fetchProfileFromBackend() {
     var token = await getSupabaseToken();
     if (!token) {
       return {
+        accessTier: DEFAULT_TIER,
         profileTier: DEFAULT_TIER,
         guacActive: false,
         updatedAt: new Date().toISOString(),
@@ -97,12 +108,22 @@
       ? backendBase.replace(/\/+$/, "") + "/api/entitlements/me"
       : "/api/entitlements/me";
 
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timeoutId =
+      controller &&
+      setTimeout(function () {
+        controller.abort();
+      }, 8000);
+
     var response = await fetch(endpoint, {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
       },
+      signal: controller ? controller.signal : undefined,
     });
+
+    if (timeoutId) clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error("Entitlement request failed: " + response.status);
@@ -113,6 +134,8 @@
   }
 
   async function refreshEntitlements() {
+    if (refreshInFlight) return;
+    refreshInFlight = true;
     if (refreshButton) refreshButton.disabled = true;
     if (statusText) statusText.textContent = "Syncing access tier...";
 
@@ -126,10 +149,11 @@
         applyProfileToUi(cached);
         if (statusText) statusText.textContent = statusText.textContent + " (cached)";
       } else {
-        applyProfileToUi({ profileTier: DEFAULT_TIER });
-        if (statusText) statusText.textContent = "Using guest tier. Sign in to sync paid access.";
+        applyProfileToUi({ profileTier: DEFAULT_TIER, accessTier: DEFAULT_TIER });
+        if (statusText) statusText.textContent = "Using guest tier. Sign in to sync access.";
       }
     } finally {
+      refreshInFlight = false;
       if (refreshButton) refreshButton.disabled = false;
     }
   }
@@ -141,6 +165,20 @@
   }
 
   window.gojitoRefreshEntitlements = refreshEntitlements;
+
+  window.addEventListener("gojito-profile-change", function (event) {
+    var detail = event && event.detail;
+    if (detail && (detail.accessTier || detail.profileTier)) {
+      applyProfileToUi({
+        accessTier: detail.accessTier || detail.profileTier,
+        profileTier: detail.profileTier || detail.accessTier,
+        guacActive: !!detail.guacActive,
+      });
+      return;
+    }
+    var cached = readCachedProfile();
+    if (cached) applyProfileToUi(cached);
+  });
 
   var cached = readCachedProfile();
   if (cached) {

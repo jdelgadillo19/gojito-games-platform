@@ -1,13 +1,16 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { gojitoAuthClientOptions } from "@gojito/shared";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-console.log("SUPABASE URL:", supabaseUrl);
-console.log("SUPABASE KEY:", supabaseAnonKey);
+export const isSupabaseConfigured = Boolean(
+  typeof supabaseUrl === "string" &&
+    supabaseUrl.trim() &&
+    typeof supabaseAnonKey === "string" &&
+    supabaseAnonKey.trim(),
+);
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase environment variables");
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase: SupabaseClient | null = isSupabaseConfigured
+  ? createClient(supabaseUrl!.trim(), supabaseAnonKey!.trim(), gojitoAuthClientOptions())
+  : null;

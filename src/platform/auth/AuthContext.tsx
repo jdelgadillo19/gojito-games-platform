@@ -8,7 +8,19 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "../supabase/client";
-import { getCurrentUser, login as loginWithPassword, logout as signOut, signup as signUpWithPassword } from "./auth";
+import {
+  getAccessToken,
+  getCurrentUser,
+  login as loginWithPassword,
+  logout as signOut,
+  signInWithGoogle as signInWithGoogleOAuth,
+  signup as signUpWithPassword,
+} from "./auth";
+import {
+  dispatchGojitoProfileChange,
+  fetchEntitlementsFromBackend,
+  registerGojitoAccessTokenProvider,
+} from "@gojito/entitlements";
 import type { AuthCredentials, AuthError, AuthResult } from "./types";
 
 export type AuthContextValue = {
@@ -19,7 +31,9 @@ export type AuthContextValue = {
   error: AuthError | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult<User>>;
   signup: (credentials: AuthCredentials) => Promise<AuthResult<User>>;
+  signInWithGoogle: () => Promise<AuthResult<void>>;
   logout: () => Promise<AuthResult<void>>;
+  isSupabaseConfigured: boolean;
   refreshUser: () => Promise<AuthResult<User | null>>;
   clearError: () => void;
 };
@@ -40,6 +54,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
   }, []);
+
+  const syncHubEntitlements = useCallback(async (activeSession: Session | null) => {
+    const apiBase = import.meta.env.VITE_GOJITO_API_URL;
+    if (typeof apiBase !== "string" || !apiBase.trim() || !activeSession) return;
+    const token = await getAccessToken(activeSession);
+    if (!token) return;
+    const snapshot = await fetchEntitlementsFromBackend(apiBase.trim(), token);
+    if (snapshot) {
+      dispatchGojitoProfileChange(snapshot, "backend");
+      try {
+        const tier = snapshot.accessTier === "guac" ? "guac" : "beef";
+        localStorage.setItem(
+          "gojito.profile.v1",
+          JSON.stringify({
+            accessTier: tier,
+            profileTier: tier,
+            guacActive: snapshot.guacActive,
+            updatedAt: new Date().toISOString(),
+            source: "backend",
+          }),
+        );
+      } catch {
+        /* ignore quota */
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!supabase) return;
+    registerGojitoAccessTokenProvider(async () => {
+      const current = session ?? (await supabase.auth.getSession()).data.session ?? null;
+      return getAccessToken(current);
+    });
+  }, [session]);
+
+  useEffect(() => {
+    if (!session) return;
+    void syncHubEntitlements(session);
+  }, [session, syncHubEntitlements]);
 
   useEffect(() => {
     if (!supabase) {
@@ -115,6 +168,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [runAuthAction],
   );
 
+  const signInWithGoogle = useCallback(
+    () => runAuthAction(() => signInWithGoogleOAuth()),
+    [runAuthAction],
+  );
+
   const logout = useCallback(
     () => runAuthAction(() => signOut()),
     [runAuthAction],
@@ -151,7 +209,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       error,
       login,
       signup,
+      signInWithGoogle,
       logout,
+      isSupabaseConfigured: Boolean(supabase),
       refreshUser,
       clearError,
     }),
@@ -163,6 +223,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout,
       refreshUser,
       session,
+      signInWithGoogle,
       signup,
       user,
     ],

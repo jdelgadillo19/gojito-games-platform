@@ -1,5 +1,5 @@
-import { AuthTest } from "./components/AuthTest";
+import { HubAccountButton } from "./components/HubAccountButton";
 
 export default function App() {
-  return <AuthTest />;
+  return <HubAccountButton />;
 }

@@ -66,6 +66,10 @@ Authenticated users:
 Games never directly call Supabase.
 Games use the platform SDK.
 
+### MVP interim (2026-05-23)
+
+Until a hub/platform save SDK exists, embedded games may call Supabase `game_saves` directly using `@gojito/shared` auth and save constants. Cakery: multiple rows per account keyed by save `id` (same `user_id` + `game_id`). Calculator Cove: one settings row per user (`id = user_id`). Do **not** add `UNIQUE (user_id, game_id)` on `game_saves` — see `supabase/game_saves_drop_user_game_unique.sql`.
+
 ---
 
 # Platform SDK Responsibilities
