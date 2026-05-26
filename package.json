@@ -4,7 +4,8 @@
     "dev": "vite",
     "dev:static": "python3 -m http.server 5173",
     "build": "vite build",
-    "build:combined": "bash scripts/build-for-path-hosting.sh"
+    "build:combined": "bash scripts/build-for-path-hosting.sh",
+    "verify:profiles": "node scripts/verify-profiles-schema.mjs"
   },
   "dependencies": {
     "@gojito/entitlements": "file:../packages/entitlements",
