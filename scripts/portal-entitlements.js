@@ -3,8 +3,9 @@
   var DEFAULT_TIER = "bean";
   var Core = window.GojitoEntitlementsCore;
 
-  var statusText = document.getElementById("entitlementStatusText");
-  var refreshButton = document.getElementById("entitlementRefreshButton");
+  // Legacy hub hero UI — removed in favor of GojitoNav account menu.
+  var legacyStatus = document.getElementById("entitlementStatus");
+  if (legacyStatus) legacyStatus.remove();
 
   function normalizeTier(raw) {
     var value = String(raw || "").toLowerCase().trim();
@@ -76,16 +77,6 @@
   function applyProfileToUi(profile) {
     var tier = normalizeTier(profile && (profile.accessTier || profile.profileTier));
     document.documentElement.setAttribute("data-profile-tier", tier);
-    if (!statusText) return;
-    if (tier === "guac") {
-      statusText.textContent = "Access tier: Guac (paid).";
-      return;
-    }
-    if (tier === "beef") {
-      statusText.textContent = "Access tier: Beef (signed in).";
-      return;
-    }
-    statusText.textContent = "Access tier: Bean (guest).";
   }
 
   var refreshInFlight = false;
@@ -136,8 +127,6 @@
   async function refreshEntitlements() {
     if (refreshInFlight) return;
     refreshInFlight = true;
-    if (refreshButton) refreshButton.disabled = true;
-    if (statusText) statusText.textContent = "Syncing access tier...";
 
     try {
       var profile = await fetchProfileFromBackend();
@@ -147,21 +136,12 @@
       var cached = readCachedProfile();
       if (cached) {
         applyProfileToUi(cached);
-        if (statusText) statusText.textContent = statusText.textContent + " (cached)";
       } else {
         applyProfileToUi({ profileTier: DEFAULT_TIER, accessTier: DEFAULT_TIER });
-        if (statusText) statusText.textContent = "Using guest tier. Sign in to sync access.";
       }
     } finally {
       refreshInFlight = false;
-      if (refreshButton) refreshButton.disabled = false;
     }
-  }
-
-  if (refreshButton) {
-    refreshButton.addEventListener("click", function () {
-      refreshEntitlements();
-    });
   }
 
   window.gojitoRefreshEntitlements = refreshEntitlements;

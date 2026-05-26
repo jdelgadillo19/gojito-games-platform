@@ -1,5 +1,5 @@
-import { HubAccountButton } from "./components/HubAccountButton";
+import { HubGojitoNav } from "./components/HubGojitoNav";
 
 export default function App() {
-  return <HubAccountButton />;
+  return <HubGojitoNav />;
 }

@@ -6,6 +6,13 @@ PROJECTS="$(cd "$PORTAL/.." && pwd)"
 
 CAKERY="$PROJECTS/cakery-bakery"
 COVE="$PROJECTS/calculator-cove"
+NAV_PKG="$PORTAL/packages/gojito-nav"
+
+echo "Syncing portal-chrome.css from @gojito/nav..."
+cp "$NAV_PKG/portal-chrome.css" "$PORTAL/portal-chrome.css"
+
+echo "Building hub (GojitoNav + auth)..."
+(cd "$PORTAL" && npm run publish:hub)
 
 echo "Building Cakery (base /cakerybakery/)..."
 (cd "$CAKERY" && GOJITO_ASSET_BASE=/cakerybakery/ npm run build)
@@ -19,7 +26,7 @@ mkdir -p "$PORTAL/cakerybakery" "$PORTAL/calculatorcove"
 cp -R "$CAKERY/dist/"* "$PORTAL/cakerybakery/"
 cp -R "$COVE/dist/"* "$PORTAL/calculatorcove/"
 
-inject_portal_chrome() {
+inject_portal_chrome_css() {
   local html="$1"
   python3 - "$html" <<'PY'
 import pathlib
@@ -33,19 +40,12 @@ if "portal-chrome.css" not in text:
         '    <link rel="stylesheet" href="/portal-chrome.css" />\n  </head>',
         1,
     )
-if "portal-brand" not in text:
-    chip = (
-        '    <a class="portal-brand" href="/" aria-label="Gojito Games — home">\n'
-        '      <img src="/gojito-games-hub-icon.svg" width="26" height="26" alt="" decoding="async" />\n'
-        "    </a>\n"
-    )
-    text = text.replace('<div id="root"></div>', chip + '    <div id="root"></div>', 1)
 path.write_text(text, encoding="utf-8")
 PY
 }
 
-echo "Injecting static portal chrome into game index.html..."
-inject_portal_chrome "$PORTAL/cakerybakery/index.html"
-inject_portal_chrome "$PORTAL/calculatorcove/index.html"
+echo "Ensuring game shells load shared portal-chrome.css..."
+inject_portal_chrome_css "$PORTAL/cakerybakery/index.html"
+inject_portal_chrome_css "$PORTAL/calculatorcove/index.html"
 
 echo "Done. Deploy with: wrangler pages deploy \"$PORTAL\" --project-name=gojito-games-portal --branch=main"

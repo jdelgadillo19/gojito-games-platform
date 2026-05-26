@@ -8,8 +8,11 @@ export default defineConfig({
     entries: ["index.html", "src/**/*.{ts,tsx,js,jsx}"],
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@gojito/entitlements": path.resolve(__dirname, "../packages/entitlements/src/core.js"),
+      "@gojito/nav": path.resolve(__dirname, "./packages/gojito-nav/src/GojitoNav.jsx"),
+      "@gojito/nav-styles": path.resolve(__dirname, "./packages/gojito-nav/portal-chrome.css"),
       "@gojito/shared": path.resolve(__dirname, "../packages/gojito-shared/src"),
     },
   },

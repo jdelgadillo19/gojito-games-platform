@@ -1,0 +1,22 @@
+{
+  "name": "@gojito/nav",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/GojitoNav.jsx"
+    },
+    "./access": {
+      "default": "./src/access.js"
+    },
+    "./portal-chrome.css": "./portal-chrome.css"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  }
+}

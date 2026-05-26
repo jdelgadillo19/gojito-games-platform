@@ -2,13 +2,15 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "dev:static": "python3 -m http.server 5173",
+    "dev:static": "npm run publish:hub && python3 -m http.server 5173",
     "build": "vite build",
+    "publish:hub": "npm run build && bash scripts/publish-hub-build.sh",
     "build:combined": "bash scripts/build-for-path-hosting.sh",
     "verify:profiles": "node scripts/verify-profiles-schema.mjs"
   },
   "dependencies": {
     "@gojito/entitlements": "file:../packages/entitlements",
+    "@gojito/nav": "file:./packages/gojito-nav",
     "@gojito/shared": "file:../packages/gojito-shared",
     "@supabase/supabase-js": "^2.106.1",
     "react": "^19.2.5",
