@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Merge hub + both Vite games into one folder for a single Cloudflare Pages deploy.
+# Merge hub + both Vite games into one folder for static path-hosted deploy.
 set -euo pipefail
 PORTAL="$(cd "$(dirname "$0")/.." && pwd)"
 PROJECTS="$(cd "$PORTAL/.." && pwd)"
@@ -48,4 +48,5 @@ echo "Ensuring game shells load shared portal-chrome.css..."
 inject_portal_chrome_css "$PORTAL/cakerybakery/index.html"
 inject_portal_chrome_css "$PORTAL/calculatorcove/index.html"
 
-echo "Done. Deploy with: wrangler pages deploy \"$PORTAL\" --project-name=gojito-games-portal --branch=main"
+echo "Done. Portal bundle is ready at: $PORTAL"
+echo "Deploy the portal directory to your static host (e.g. Supabase Storage + CDN or any static file host)."

@@ -1,11 +1,11 @@
-/** Path hosting — same origin as this portal (prod + *.pages.dev previews). */
+/** Path hosting — same origin as this portal (production and preview hosts). */
 window.GOJITO_GAMES = {
   cakeryBakery: "/cakerybakery/",
   calculatorCove: "/calculatorcove/",
 };
 
 /**
- * Optional backend base URL for portal entitlement sync.
- * Leave empty to use same-origin /api routes.
+ * Optional API base for legacy entitlement sync. Leave empty — entitlements
+ * are read from Supabase `profiles.tier` when unset.
  */
 window.GOJITO_BACKEND_URL = window.GOJITO_BACKEND_URL || "";

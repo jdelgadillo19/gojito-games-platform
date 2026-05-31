@@ -21,12 +21,6 @@ export default defineConfig({
     watch: {
       ignored: ["**/cakerybakery/**", "**/calculatorcove/**", "**/dist/**"],
     },
-    proxy: {
-      "/api": {
-        target: process.env.VITE_GOJITO_API_URL || "http://127.0.0.1:8787",
-        changeOrigin: true,
-      },
-    },
     fs: {
       deny: [".env", ".env.*"],
     },

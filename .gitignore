@@ -1,3 +1,4 @@
-# Vendored game builds under cakerybakery/ and calculatorcove/ are tracked for Cloudflare Pages parity with gojitogames.com.
+# Vendored game builds under cakerybakery/ and calculatorcove/ are tracked for hub path hosting.
 
 .DS_Store
+.wrangler/
