@@ -110,8 +110,17 @@ export function AuthTest() {
       </p>
 
       {error && (
-        <p role="alert" style={{ color: "#8b2500", margin: "0.5rem 0" }}>
-          <strong>Error ({error.code}):</strong> {error.message}
+        <p
+          role={error.code === "confirmation_pending" ? "status" : "alert"}
+          style={{
+            color: error.code === "confirmation_pending" ? "#1a5c2e" : "#8b2500",
+            margin: "0.5rem 0",
+          }}
+        >
+          <strong>
+            {error.code === "confirmation_pending" ? "Next step" : `Error (${error.code})`}:
+          </strong>{" "}
+          {error.message}
         </p>
       )}
 

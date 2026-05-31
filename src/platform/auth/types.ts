@@ -7,6 +7,7 @@ export type AuthCredentials = {
 
 export type AuthErrorCode =
   | "auth_failed"
+  | "confirmation_pending"
   | "not_configured"
   | "validation_failed";
 

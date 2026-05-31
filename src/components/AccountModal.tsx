@@ -82,7 +82,10 @@ export function AccountModal({ open, onClose }: AccountModalProps) {
     setBusy(true);
     clearError();
     const action = mode === "signin" ? login : signup;
-    await action({ email, password });
+    const result = await action({ email, password });
+    if (mode === "signup" && result.error?.code === "confirmation_pending") {
+      setMode("signin");
+    }
     setBusy(false);
   }
 
@@ -198,7 +201,14 @@ export function AccountModal({ open, onClose }: AccountModalProps) {
               </div>
             </form>
             {error ? (
-              <p role="alert" style={{ color: "#9b2c2c", fontSize: "0.85rem", margin: "0.5rem 0 0" }}>
+              <p
+                role={error.code === "confirmation_pending" ? "status" : "alert"}
+                style={{
+                  color: error.code === "confirmation_pending" ? "#1a5c2e" : "#9b2c2c",
+                  fontSize: "0.85rem",
+                  margin: "0.5rem 0 0",
+                }}
+              >
                 {error.message}
               </p>
             ) : null}

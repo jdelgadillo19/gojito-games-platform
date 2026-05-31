@@ -15,6 +15,13 @@ export function validationError(message: string): AuthError {
   return authError("validation_failed", message);
 }
 
+export function confirmationPendingError(email: string): AuthError {
+  return authError(
+    "confirmation_pending",
+    `We sent a confirmation link to ${email}. Open that email and click the link to activate your account, then return here to log in.`,
+  );
+}
+
 export function fromSupabaseError(error: { message: string }): AuthError {
   return authError("auth_failed", error.message);
 }

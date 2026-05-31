@@ -1,6 +1,7 @@
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "../supabase/client";
 import {
+  confirmationPendingError,
   fromSupabaseError,
   notConfiguredError,
   validationError,
@@ -85,14 +86,18 @@ export async function signup(
     return { data: null, error: fromSupabaseError(error) };
   }
 
-  if (!data.user) {
-    return {
-      data: null,
-      error: fromSupabaseError({ message: "Sign-up succeeded but no user was returned." }),
-    };
+  if (data.session) {
+    const user = data.session.user ?? data.user;
+    if (user) {
+      return { data: user, error: null };
+    }
   }
 
-  return { data: data.user, error: null };
+  // Confirm-email flow: account is created but there is no session until the link is used.
+  return {
+    data: null,
+    error: confirmationPendingError(credentials.email.trim()),
+  };
 }
 
 export async function logout(): Promise<AuthResult<void>> {
