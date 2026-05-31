@@ -120,7 +120,36 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--card-accent);
+}
+
+.game-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
   margin-bottom: 0.75rem;
+}
+
+.game-card .badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.game-card .badge-beta {
+  color: #fde68a;
+  background: rgba(232, 168, 73, 0.15);
+  border-color: rgba(232, 168, 73, 0.35);
+}
+
+.game-card .badge-soon {
+  color: #99f6e4;
+  background: rgba(61, 190, 182, 0.12);
+  border-color: rgba(61, 190, 182, 0.35);
 }
 
 .game-card h2 {
@@ -165,4 +194,44 @@ footer {
 
 footer a {
   color: var(--accent-teal);
+}
+
+.gojito-beta-banner {
+  position: sticky;
+  top: var(--gojito-chrome-height, 48px);
+  z-index: 40;
+  background: rgba(232, 168, 73, 0.15);
+  border-bottom: 1px solid rgba(232, 168, 73, 0.35);
+}
+
+.gojito-beta-banner__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.gojito-beta-banner__inner p {
+  margin: 0;
+  flex: 1;
+}
+
+.gojito-beta-banner__dismiss {
+  flex-shrink: 0;
+  border: 1px solid rgba(232, 168, 73, 0.5);
+  background: transparent;
+  color: var(--accent-citrus);
+  border-radius: 8px;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.gojito-beta-banner__dismiss:hover {
+  background: rgba(232, 168, 73, 0.12);
 }

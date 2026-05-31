@@ -21,11 +21,14 @@ import {
   fetchEntitlementsFromBackend,
   registerGojitoAccessTokenProvider,
 } from "@gojito/entitlements";
+import { submitFullAccessRequest, dispatchGojitoProfileTierChange, type FullAccessRequestResult } from "@gojito/shared";
 import type { AuthCredentials, AuthError, AuthResult } from "./types";
+import { getUserProfile } from "../profileStore";
 
 export type AuthContextValue = {
   user: User | null;
   session: Session | null;
+  profileTier: string | undefined;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: AuthError | null;
@@ -36,6 +39,10 @@ export type AuthContextValue = {
   isSupabaseConfigured: boolean;
   refreshUser: () => Promise<AuthResult<User | null>>;
   clearError: () => void;
+  requestFullAccess: (
+    source?: string,
+    contextNote?: string | null,
+  ) => Promise<FullAccessRequestResult>;
 };
 
 export const AuthContext = createContext<AuthContextValue | null>(null);
@@ -47,12 +54,25 @@ type AuthProviderProps = {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profileTier, setProfileTier] = useState<string | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
 
   const applySession = useCallback((nextSession: Session | null) => {
     setSession(nextSession);
     setUser(nextSession?.user ?? null);
+  }, []);
+
+  const syncProfileTierFromSupabase = useCallback(async (activeSession: Session | null) => {
+    const uid = activeSession?.user?.id;
+    if (!uid || !supabase) {
+      setProfileTier(undefined);
+      return;
+    }
+    const doc = await getUserProfile(uid);
+    const tier = doc?.tier ?? "beef";
+    setProfileTier(tier);
+    dispatchGojitoProfileTierChange(tier);
   }, []);
 
   const syncHubEntitlements = useCallback(async (activeSession: Session | null) => {
@@ -90,6 +110,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [session]);
 
   useEffect(() => {
+    if (!session) {
+      setProfileTier(undefined);
+      return;
+    }
+    void syncProfileTierFromSupabase(session);
+  }, [session, syncProfileTierFromSupabase]);
+
+  useEffect(() => {
     if (!session) return;
     void syncHubEntitlements(session);
   }, [session, syncHubEntitlements]);
@@ -122,19 +150,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
         applySession(null);
       } else {
         applySession(data.session);
+        void syncProfileTierFromSupabase(data.session);
       }
 
       finishLoading();
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
+      (event, nextSession) => {
         if (!isMounted) {
           return;
         }
         applySession(nextSession);
         setError(null);
         finishLoading();
+        if (event !== "TOKEN_REFRESHED") {
+          void syncProfileTierFromSupabase(nextSession);
+        }
       },
     );
 
@@ -142,7 +174,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isMounted = false;
       listener.subscription.unsubscribe();
     };
-  }, [applySession]);
+  }, [applySession, syncProfileTierFromSupabase]);
 
   const runAuthAction = useCallback(
     async <T,>(action: () => Promise<AuthResult<T>>): Promise<AuthResult<T>> => {
@@ -200,10 +232,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
   }, []);
 
+  const requestFullAccess = useCallback(
+    async (source = "hub_nav", contextNote?: string | null) => {
+      if (!user?.id) {
+        return submitFullAccessRequest(null, { userId: "", source, contextNote });
+      }
+      return submitFullAccessRequest(supabase, {
+        userId: user.id,
+        email: user.email ?? null,
+        displayName:
+          (user.user_metadata?.full_name as string | undefined) ??
+          (user.user_metadata?.name as string | undefined) ??
+          null,
+        source,
+        contextNote,
+      });
+    },
+    [user],
+  );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
       session,
+      profileTier,
       isAuthenticated: Boolean(session),
       isLoading,
       error,
@@ -214,6 +266,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isSupabaseConfigured: Boolean(supabase),
       refreshUser,
       clearError,
+      requestFullAccess,
     }),
     [
       clearError,
@@ -221,7 +274,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isLoading,
       login,
       logout,
+      profileTier,
       refreshUser,
+      requestFullAccess,
       session,
       signInWithGoogle,
       signup,

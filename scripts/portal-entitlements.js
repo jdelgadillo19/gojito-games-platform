@@ -136,8 +136,6 @@
       var cached = readCachedProfile();
       if (cached) {
         applyProfileToUi(cached);
-      } else {
-        applyProfileToUi({ profileTier: DEFAULT_TIER, accessTier: DEFAULT_TIER });
       }
     } finally {
       refreshInFlight = false;

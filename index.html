@@ -16,12 +16,13 @@
       rel="stylesheet"
     />
     <script src="/games-config.js"></script>
-    <script type="module" crossorigin src="/assets/index-DK1bQYNI.js"></script>
+    <script type="module" crossorigin src="/assets/index-DDgowCPD.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-Bqt_Eyzu.css">
   </head>
   <body class="gojito-has-nav">
     <a class="skip-link" href="#games">Skip to games</a>
     <div id="gojito-nav-root" aria-live="polite"></div>
+    <div id="gojito-beta-banner-root"></div>
     <div class="wrap">
       <header>
         <h1>Gojito Games</h1>
@@ -30,9 +31,12 @@
 
       <section id="games" class="game-grid" aria-label="Games">
         <a class="game-card cakery" id="link-cakery" href="#" data-game="cakeryBakery">
-          <span class="pill">Adventure</span>
+          <div class="game-card-badges">
+            <span class="pill">Adventure</span>
+            <span class="badge badge-beta">Story beta</span>
+          </div>
           <h2>Cakery Bakery</h2>
-          <p>Sticker puzzles, upgrades, and sweet progression — offline-first on your device.</p>
+          <p>Run a bakery, master math, and chase high scores — saves sync when you sign in.</p>
           <span class="cta">
             Play
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -42,9 +46,12 @@
         </a>
 
         <a class="game-card cove" id="link-cove" href="#" data-game="calculatorCove">
-          <span class="pill">Strategy</span>
+          <div class="game-card-badges">
+            <span class="pill">Strategy</span>
+            <span class="badge badge-soon">Premium modes soon</span>
+          </div>
           <h2>Calculator Cove</h2>
-          <p>Factor-driven board play — sharpen math instincts against the computer.</p>
+          <p>Factor-driven connect-four on a 6×6 grid — hot-seat for two players. More modes on the way.</p>
           <span class="cta">
             Play
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">

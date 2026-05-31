@@ -45,6 +45,7 @@ function avatarInitial(user, isAuthenticated) {
  * @param {() => void} [props.onSignIn]
  * @param {() => void} [props.onSignOut]
  * @param {() => void | Promise<void>} [props.onRefreshAccess]
+ * @param {() => void | Promise<{ ok?: boolean, message?: string } | void>} [props.onRequestFullAccess]
  * @param {Array<{ label: string, href: string }>} [props.games]
  * @param {string} [props.iconSrc]
  */
@@ -60,6 +61,7 @@ export function GojitoNav({
   onSignIn,
   onSignOut,
   onRefreshAccess,
+  onRequestFullAccess,
   games,
   iconSrc = "/gojito-games-hub-icon.svg",
 }) {
@@ -68,6 +70,8 @@ export function GojitoNav({
   const navRef = useRef(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [gamesOpen, setGamesOpen] = useState(false);
+  const [accessRequestNote, setAccessRequestNote] = useState("");
+  const [accessRequestBusy, setAccessRequestBusy] = useState(false);
   const [domTier, setDomTier] = useState(() =>
     typeof document !== "undefined"
       ? normalizeProfileTier(document.documentElement.getAttribute("data-profile-tier"))
@@ -134,6 +138,29 @@ export function GojitoNav({
     }
     readDomTier();
   };
+
+  const handleRequestFullAccess = async () => {
+    if (!onRequestFullAccess || accessRequestBusy) return;
+    setAccessRequestBusy(true);
+    setAccessRequestNote("");
+    try {
+      const result = await onRequestFullAccess();
+      const message =
+        result && typeof result === "object" && result.message
+          ? result.message
+          : result && typeof result === "object" && result.ok
+            ? "Request sent! We will enable full access on your account manually."
+            : "Could not send your request. Try again or contact the developer.";
+      setAccessRequestNote(message);
+    } catch {
+      setAccessRequestNote("Could not send your request. Try again or contact the developer.");
+    } finally {
+      setAccessRequestBusy(false);
+    }
+  };
+
+  const showRequestFullAccess =
+    isAuthenticated && access !== "Full access" && typeof onRequestFullAccess === "function";
 
   const accessClass =
     access === "Full access"
@@ -204,6 +231,26 @@ export function GojitoNav({
                 </p>
                 {isAuthenticated ? (
                   <p className="gojito-nav__menu-hint">Cloud saves on</p>
+                ) : null}
+                {showRequestFullAccess ? (
+                  <>
+                    <button
+                      type="button"
+                      className="gojito-nav__menu-item gojito-nav__menu-item--btn gojito-nav__menu-item--accent"
+                      role="menuitem"
+                      disabled={accessRequestBusy}
+                      onClick={() => void handleRequestFullAccess()}
+                    >
+                      {accessRequestBusy ? "Sending request…" : "Request full access"}
+                    </button>
+                    {accessRequestNote ? (
+                      <p className="gojito-nav__menu-hint gojito-nav__menu-hint--status">{accessRequestNote}</p>
+                    ) : (
+                      <p className="gojito-nav__menu-hint">
+                        Payment is not set up yet — we enable full access manually.
+                      </p>
+                    )}
+                  </>
                 ) : null}
                 <button
                   type="button"

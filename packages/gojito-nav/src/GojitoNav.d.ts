@@ -12,6 +12,8 @@ export type GojitoNavProps = {
   onSignIn?: () => void;
   onSignOut?: () => void;
   onRefreshAccess?: () => void | Promise<void>;
+  /** Called when a signed-in member requests manual full access (no Stripe yet). */
+  onRequestFullAccess?: () => void | Promise<{ ok?: boolean; message?: string } | void>;
   games?: Array<{ label: string; href: string }>;
   iconSrc?: string;
 };

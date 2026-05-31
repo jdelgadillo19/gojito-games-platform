@@ -268,3 +268,19 @@
   font-family: inherit;
   cursor: pointer;
 }
+
+.gojito-nav__menu-item--accent {
+  color: var(--gojito-chrome-accent, #e8a849);
+  font-weight: 600;
+}
+
+.gojito-nav__menu-item--accent:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.gojito-nav__menu-hint--status {
+  color: var(--gojito-chrome-accent, #e8a849);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
