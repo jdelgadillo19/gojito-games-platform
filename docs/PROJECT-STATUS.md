@@ -93,6 +93,7 @@ Env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` in hub + both games (same pro
 
 ## Related artifacts
 
+- **Plan commitment (2026-05-31):** [`docs/planning-artifacts/PLAN-COMMITMENT-2026.05.31.md`](./planning-artifacts/PLAN-COMMITMENT-2026.05.31.md)
 - Sprint change proposal: `_bmad-output/planning-artifacts/sprint-change-proposal-2026-05-23.md`
 - Sprint status YAML: `_bmad-output/planning-artifacts/sprint-status-login-saves-mvp.yaml`
 - Next session prompt: [`NEXT-SESSION.md`](./NEXT-SESSION.md)

@@ -8,7 +8,10 @@ In the Supabase SQL editor for your project, run (in order):
 
 1. [supabase/profiles.sql](../supabase/profiles.sql)
 2. **[supabase/profiles_entitlement_sync_fix.sql](../supabase/profiles_entitlement_sync_fix.sql)** — required if `UPDATE ... SET tier = 'guac'` returns `beef` in `RETURNING` (legacy DB trigger).
-3. Existing save migrations if not applied: `game_saves.sql`, `game_saves_rls_fix.sql`, `game_saves_drop_user_game_unique.sql`
+3. **[supabase/profiles_grant_source.sql](../supabase/profiles_grant_source.sql)** — cohort tracking (`founder_pass`, `demo_helper`, `demo_interest`).
+4. **[supabase/access_requests.sql](../supabase/access_requests.sql)** — fake-door / full-access request rows.
+5. **[supabase/access_requests_auto_grant.sql](../supabase/access_requests_auto_grant.sql)** — wind-test: pending request → auto guac (disable before public launch).
+6. Existing save migrations if not applied: `game_saves.sql`, `game_saves_rls_fix.sql`, `game_saves_drop_user_game_unique.sql`
 
 ## 2. Keep backend URL unset (Supabase-driven tier)
 
