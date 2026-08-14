@@ -126,6 +126,12 @@
 
   async function refreshEntitlements() {
     if (refreshInFlight) return;
+    var backendBase =
+      typeof window.GOJITO_BACKEND_URL === "string" ? window.GOJITO_BACKEND_URL.trim() : "";
+    // When no legacy API is configured, Supabase profiles.tier is authoritative
+    // (hub AuthContext). Do not hit /api/entitlements/me or restore a stale cache.
+    if (!backendBase) return;
+
     refreshInFlight = true;
 
     try {
@@ -142,8 +148,6 @@
     }
   }
 
-  window.gojitoRefreshEntitlements = refreshEntitlements;
-
   window.addEventListener("gojito-profile-change", function (event) {
     var detail = event && event.detail;
     if (detail && (detail.accessTier || detail.profileTier)) {
@@ -158,9 +162,12 @@
     if (cached) applyProfileToUi(cached);
   });
 
-  var cached = readCachedProfile();
-  if (cached) {
-    applyProfileToUi(cached);
+  var backendConfigured =
+    typeof window.GOJITO_BACKEND_URL === "string" && window.GOJITO_BACKEND_URL.trim();
+  if (backendConfigured) {
+    window.gojitoRefreshEntitlements = refreshEntitlements;
+    var cached = readCachedProfile();
+    if (cached) applyProfileToUi(cached);
+    refreshEntitlements();
   }
-  refreshEntitlements();
 })();

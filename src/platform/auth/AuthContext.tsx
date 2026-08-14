@@ -38,6 +38,7 @@ export type AuthContextValue = {
   logout: () => Promise<AuthResult<void>>;
   isSupabaseConfigured: boolean;
   refreshUser: () => Promise<AuthResult<User | null>>;
+  refreshEntitlements: () => Promise<boolean>;
   clearError: () => void;
   requestFullAccess: (
     source?: string,
@@ -210,6 +211,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [runAuthAction],
   );
 
+  const refreshEntitlements = useCallback(async (): Promise<boolean> => {
+    if (!supabase) return false;
+    const { data } = await supabase.auth.getSession();
+    const uid = data.session?.user?.id;
+    if (!uid) {
+      setProfileTier(undefined);
+      return false;
+    }
+    const doc = await getUserProfile(uid);
+    const tier = doc?.tier ?? "beef";
+    setProfileTier(tier);
+    dispatchGojitoProfileTierChange(tier);
+    return Boolean(doc);
+  }, []);
+
   const refreshUser = useCallback(
     () =>
       runAuthAction(async () => {
@@ -227,6 +243,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }),
     [runAuthAction],
   );
+
+  useEffect(() => {
+    window.gojitoRefreshEntitlements = () => refreshEntitlements();
+    return () => {
+      if (window.gojitoRefreshEntitlements) {
+        window.gojitoRefreshEntitlements = undefined;
+      }
+    };
+  }, [refreshEntitlements]);
 
   const clearError = useCallback(() => {
     setError(null);
@@ -265,6 +290,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout,
       isSupabaseConfigured: Boolean(supabase),
       refreshUser,
+      refreshEntitlements,
       clearError,
       requestFullAccess,
     }),
@@ -275,6 +301,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       login,
       logout,
       profileTier,
+      refreshEntitlements,
       refreshUser,
       requestFullAccess,
       session,

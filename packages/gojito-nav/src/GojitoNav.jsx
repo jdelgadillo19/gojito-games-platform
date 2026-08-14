@@ -85,7 +85,11 @@ export function GojitoNav({
   useEffect(() => {
     readDomTier();
     window.addEventListener("gojito-profile-change", readDomTier);
-    return () => window.removeEventListener("gojito-profile-change", readDomTier);
+    window.addEventListener("gojito-profile-tier", readDomTier);
+    return () => {
+      window.removeEventListener("gojito-profile-change", readDomTier);
+      window.removeEventListener("gojito-profile-tier", readDomTier);
+    };
   }, [readDomTier]);
 
   const effectiveTier =

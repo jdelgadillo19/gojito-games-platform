@@ -1,5 +1,6 @@
 -- Gojito Games: manual full-access requests (beta — no Stripe checkout yet)
--- Apply in Supabase SQL editor. Review pending rows in Table Editor or:
+-- Apply in Supabase SQL editor. Then apply commercial_security_phase1.sql so
+-- clients cannot set status or self-grant. Review pending rows in Table Editor or:
 --   select * from public.access_requests where status = 'pending' order by created_at desc;
 
 create table if not exists public.access_requests (
@@ -34,8 +35,7 @@ create policy "access_requests_insert_own"
   on public.access_requests for insert
   with check (auth.uid() = user_id);
 
+-- Client UPDATE/DELETE are denied by RLS (no policy). commercial_security_phase1.sql
+-- also revokes INSERT on status and all UPDATE/DELETE privileges.
 drop policy if exists "access_requests_update_own" on public.access_requests;
-create policy "access_requests_update_own"
-  on public.access_requests for update
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+drop policy if exists "access_requests_delete_own" on public.access_requests;

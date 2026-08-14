@@ -8,3 +8,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+interface Window {
+  gojitoRefreshEntitlements?: () => void | Promise<boolean | void>;
+}

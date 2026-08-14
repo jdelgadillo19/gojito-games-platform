@@ -1,5 +1,6 @@
 -- Gojito Games: account profiles (tier drives free vs full game access in clients)
 -- Apply in Supabase SQL editor after auth is enabled.
+-- Then apply commercial_security_phase1.sql — required before accepting payment.
 -- Run before granting Guac manually: users need a row (created on first sign-in via games).
 
 create table if not exists public.profiles (
@@ -33,6 +34,8 @@ create policy "profiles_insert_own"
   on public.profiles for insert
   with check (auth.uid() = id);
 
+-- Open own-row UPDATE is replaced by commercial_security_phase1.sql (required).
+-- Until that file is applied, authenticated clients can write entitlement columns.
 drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own"
   on public.profiles for update

@@ -10,8 +10,10 @@ In the Supabase SQL editor for your project, run (in order):
 2. **[supabase/profiles_entitlement_sync_fix.sql](../supabase/profiles_entitlement_sync_fix.sql)** — required if `UPDATE ... SET tier = 'guac'` returns `beef` in `RETURNING` (legacy DB trigger).
 3. **[supabase/profiles_grant_source.sql](../supabase/profiles_grant_source.sql)** — cohort tracking (`founder_pass`, `demo_helper`, `demo_interest`).
 4. **[supabase/access_requests.sql](../supabase/access_requests.sql)** — fake-door / full-access request rows.
-5. **[supabase/access_requests_auto_grant.sql](../supabase/access_requests_auto_grant.sql)** — wind-test: pending request → auto guac (disable before public launch).
+5. **[supabase/commercial_security_phase1.sql](../supabase/commercial_security_phase1.sql)** — **required.** Blocks client self-upgrade of paid entitlement and `access_requests.status`. Drops the demo auto-grant trigger if it was previously applied.
 6. Existing save migrations if not applied: `game_saves.sql`, `game_saves_rls_fix.sql`, `game_saves_drop_user_game_unique.sql`
+
+Do **not** apply [supabase/access_requests_auto_grant.sql](../supabase/access_requests_auto_grant.sql). That file re-enables browser self-upgrade.
 
 ## 2. Keep backend URL unset (Supabase-driven tier)
 
@@ -21,7 +23,7 @@ Until `gojito-backend` is deployed **and** you grant Guac via admin API, leave *
 - `cakery-bakery/.env`
 - `calculator-cove/.env`
 
-If the API URL is set but KV has no grant, login sync will **overwrite** manual `guac` in Supabase with `beef`.
+If the API URL is set, clients **read** KV for display only and no longer write it onto `profiles.tier` (Phase 1). Manual SQL grants on `profiles` remain the live access source until a trusted server path exists.
 
 ## 3. Grant full access manually
 
@@ -53,7 +55,20 @@ Then in the browser:
 - Cakery: packager / recipe book / extra villages unlocked
 - Calculator Cove: Battleship and large boards unlocked
 
-## 5. Hub embedded games
+## 5. Verify client self-upgrade is rejected
+
+After `commercial_security_phase1.sql` is applied, using a Beef test account:
+
+```bash
+cd gojito-platform
+GOJITO_TEST_ACCESS_TOKEN='eyJ...' npm run test:phase1-security
+```
+
+Full steps (browser REST + SQL sanity): [docs/testing/phase1-commercial-security.md](../../docs/testing/phase1-commercial-security.md).
+
+Dashboard SQL grants still work (postgres / service_role), e.g. `grant_guac_example.sql`.
+
+## 6. Hub embedded games
 
 After changing game source:
 

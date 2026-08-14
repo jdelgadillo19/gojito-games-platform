@@ -2,3 +2,9 @@
 
 .DS_Store
 .wrangler/
+dist/
+.vite-index.html
+# Hashed hub bundles are produced by npm run build / publish:hub. Never commit them
+# as a stand-in for src/ — a stale index-*.js was previously served as the hub.
+/assets/index-*.js
+/assets/index-*.css

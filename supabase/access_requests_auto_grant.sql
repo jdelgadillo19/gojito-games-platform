@@ -1,4 +1,9 @@
--- Gojito: pre-founder demo loop — pending access_requests auto-grant guac.
+-- DEPRECATED — do not apply.
+-- Phase 1 commercial security drops this trigger. Applying this file re-enables
+-- client self-upgrade: inserting a pending access_request grants profiles.tier = guac.
+-- See commercial_security_phase1.sql.
+--
+-- Historical: pre-founder demo loop — pending access_requests auto-grant guac.
 -- Requires: access_requests.sql, profiles.sql, profiles_grant_source.sql
 --
 -- Flow: user taps fake-door / "Request full access" → row in access_requests (pending)

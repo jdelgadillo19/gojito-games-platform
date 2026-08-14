@@ -12,6 +12,7 @@ export function HubGojitoNav() {
     isSupabaseConfigured,
     logout,
     requestFullAccess,
+    refreshEntitlements,
   } = useAuth();
   const [accountModalOpen, setAccountModalOpen] = useState(false);
 
@@ -28,9 +29,7 @@ export function HubGojitoNav() {
         onSignIn={() => setAccountModalOpen(true)}
         onSignOut={() => void logout()}
         onRefreshAccess={async () => {
-          if (typeof window.gojitoRefreshEntitlements === "function") {
-            await window.gojitoRefreshEntitlements();
-          }
+          await refreshEntitlements();
         }}
         onRequestFullAccess={() => requestFullAccess("hub_nav")}
       />
