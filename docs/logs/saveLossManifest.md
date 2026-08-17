@@ -1,0 +1,1 @@
+Date | User | Game | What happened | Fixed? | User notified?

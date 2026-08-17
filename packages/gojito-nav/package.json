@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./src/GojitoNav.d.ts",
       "default": "./src/GojitoNav.jsx"
     },
     "./access": {
@@ -11,6 +12,7 @@
     },
     "./portal-chrome.css": "./portal-chrome.css"
   },
+  "types": "./src/GojitoNav.d.ts",
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18"

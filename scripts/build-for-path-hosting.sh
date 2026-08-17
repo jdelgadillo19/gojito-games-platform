@@ -28,20 +28,21 @@ cp -R "$COVE/dist/"* "$PORTAL/calculatorcove/"
 
 inject_portal_chrome_css() {
   local html="$1"
-  python3 - "$html" <<'PY'
-import pathlib
-import sys
-
-path = pathlib.Path(sys.argv[1])
-text = path.read_text(encoding="utf-8")
-if "portal-chrome.css" not in text:
-    text = text.replace(
-        "</head>",
-        '    <link rel="stylesheet" href="/portal-chrome.css" />\n  </head>',
-        1,
-    )
-path.write_text(text, encoding="utf-8")
-PY
+  node - "$html" <<'NODE'
+const fs = require("node:fs");
+const file = process.argv[2];
+const text = fs.readFileSync(file, "utf8");
+if (!text.includes("portal-chrome.css")) {
+  fs.writeFileSync(
+    file,
+    text.replace(
+      "</head>",
+      '    <link rel="stylesheet" href="/portal-chrome.css" />\n  </head>',
+    ),
+    "utf8",
+  );
+}
+NODE
 }
 
 echo "Ensuring game shells load shared portal-chrome.css..."
