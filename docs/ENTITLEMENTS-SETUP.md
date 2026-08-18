@@ -12,6 +12,10 @@ In the Supabase SQL editor for your project, run (in order):
 4. **[supabase/access_requests.sql](../supabase/access_requests.sql)** — fake-door / full-access request rows.
 5. **[supabase/commercial_security_phase1.sql](../supabase/commercial_security_phase1.sql)** — **required.** Blocks client self-upgrade of paid entitlement and `access_requests.status`. Drops the demo auto-grant trigger if it was previously applied.
 6. Existing save migrations if not applied: `game_saves.sql`, `game_saves_rls_fix.sql`, `game_saves_drop_user_game_unique.sql`
+7. **Phase 3A (purchase ledger — apply only when ready, does not enable checkout):**
+   1. [supabase/purchases.sql](../supabase/purchases.sql)
+   2. [supabase/stripe_webhook_events.sql](../supabase/stripe_webhook_events.sql)
+   3. [supabase/founder_pass_fulfillment.sql](../supabase/founder_pass_fulfillment.sql)
 
 Do **not** apply [supabase/access_requests_auto_grant.sql](../supabase/access_requests_auto_grant.sql). That file re-enables browser self-upgrade.
 

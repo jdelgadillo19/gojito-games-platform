@@ -7,7 +7,8 @@
     "publish:hub": "npm run build && bash scripts/publish-hub-build.sh",
     "build:combined": "bash scripts/build-for-path-hosting.sh",
     "verify:profiles": "node scripts/verify-profiles-schema.mjs",
-    "test:phase1-security": "node scripts/phase1-self-upgrade-test.mjs"
+    "test:phase1-security": "node scripts/phase1-self-upgrade-test.mjs",
+    "test:phase3a-ledger": "node scripts/phase3a-purchase-ledger-test.mjs"
   },
   "dependencies": {
     "@gojito/entitlements": "file:../packages/entitlements",
